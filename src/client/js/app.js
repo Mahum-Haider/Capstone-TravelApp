@@ -8,16 +8,20 @@ const weatherbit_apiKey = '25e64ccb62c842c6a2f539514735a74f'
 const weatherbitURL = 'https://api.weatherbit.io/v2.0/forecast/daily?lat='
 const pixabay_apiKey = '17623880-f3832363eaa493c9749941d77'
 const pixabayURL = 'https://pixabay.com/api/?key='
-const apiURL = 'http://localhost:3000'
+// const apiURL = 'http://localhost:3000'
 
 document.getElementById('generate').addEventListener('click', bringAction);
-/* Function called by event listener */
+// /* Function called by event listener */
 function bringAction(event) {
+
+
+// function bringAction(e){
+//   e.preventDefault();
 
 // Get city and dates from UI
 const city = document.getElementById('city').value;
-const deptDate = document.getElementById('deptdate').value
-const retDate = document.getElementById('retdate').value
+const deptDate = document.getElementsByClassName("myInput")[0].value;
+const retDate = document.getElementsByClassName("myInput")[1].value;
 
 // Understanding this part from: "https://www.w3schools.com/howto/howto_js_countdown.asp"
 
@@ -30,14 +34,11 @@ const retDate = document.getElementById('retdate').value
 // Time calculations for days
 	var days = Math.floor(difference / (1000 * 60 * 60 * 24));
 // Display the result in the element with id="demo"
-	if(document.getElementById("tripInfo")) {
-	    document.getElementById("tripInfo").innerHTML = `Your trip is ${days} days away`;
-	};
-
+  document.getElementById("tripInfo").innerHTML = `Your trip is ${days} days away`;
 
 // Fetching geonames stats of destination place
 	// dataGeonames(geonameURL, city, geonames_username)
-	dataGeonames(city)
+	getDataFromGeoNames(city)
     	.then(function(data) {
         	// console.log(data)
         // return postData("http://localhost:3000/geonames", {
@@ -48,10 +49,10 @@ const retDate = document.getElementById('retdate').value
             // country: data.main.country
 
           // After the research, figured this out:
-         return postData('/geonames', {
+         return postData('http://localhost:3000/geonames', {
         	latitude: data.geonames[0].lat,
         	longitude: data.geonames[0].lng,
-        	city: data.geonames[0].name
+        	// city: data.geonames[0].name
         })
         })
 
@@ -59,18 +60,15 @@ const retDate = document.getElementById('retdate').value
 
         .then(function(res) {
         	console.log("res")
-        	// const lat = res[res.length - 1].latitude;
-        	// const lng = res[res.length - 1].longitude;
-        	const lat=res[0].latitude
-            const lng= res[0].longitude
-        	return {lat, lng};
+        	const lat = res[res.length - 1].latitude;
+            const lng = res[res.length - 1].longitude;
+        	return { lat, lng };
         })
         .then (function({lat, lng}) {
-        	console.log("coords for Weather", lat, lon)
-        	dataWeatherbit(lat, lng);
+        	return getDataFromWeatherBit(lat, lng);
         })
         .then(function (weatherData) {
-        	return postData('/weatherbit', {
+        	return postData('http://localhost:3000/weatherbit', {
         		high: weatherData.data[0].high_temp,
         		low: weatherData.data[0].low_temp,
         		description: weatherData.data[0].weather.description
@@ -78,18 +76,17 @@ const retDate = document.getElementById('retdate').value
 
         })
         .then(function() {
-        	return dataPixabay(city);
+        	return getDataFromPixabay(city);
         })
         .then(function (data) {
-        	return postData('/pixabay', {
+        	return postData('http://localhost:3000/pixabay', {
         		image: data.hits[0].webformatURL
         	})
        	// Update
-        .then(function() {
-        	updateUI()
-        })
-        })
+        .then(updateUI());
+    });
 };
+
 // OR
 	// .then(function(data){
 	// updateUI()
@@ -97,63 +94,61 @@ const retDate = document.getElementById('retdate').value
 
 // Function to get Geonames data
 	// const dataGeonames = async (geonameURL, city, geonames_username) => {
-		const dataGeonames = async (city) => {
-		const gnurl = `http://api.geonames.org/searchJSON?q=${city}&maxRows=1&username=${geonames_username}`
-		const res = await fetch (gnurl);
+		const getDataFromGeoNames = async (city) => {
+		const url = `http://api.geonames.org/searchJSON?q=${city}&maxRows=1&username=${geonames_username}`
+		const res = await fetch (url);
 		try {
 			const data = await res.json();
 			return data;
 		}
 		catch (error) {
-			console.log("dataGeonames Error", error);
+			console.log("Geonames Error", error);
 		}
 	}
 
 //Function to get Weatherbit data
-	const dataWeatherbit = async (weatherbitURL, lat, lng, weatherbit_apiKey) => {
-		const wburl = `https://api.weatherbit.io/v2.0/forecast/daily?lat=${lat}&lon=${lng}&key=${weatherbit_apiKey}`;
-		const res = await fetch (wburl);
+	const getDataFromWeatherBit  = async (lat, lng) => {
+		const url = `https://api.weatherbit.io/v2.0/forecast/daily?lat=${lat}&lon=${lng}&key=${weatherbit_apiKey}`;
+		const res = await fetch (url);
 		try {
 			const data = await res.json();
 			return data;
 		}
 		catch (error) {
-			console.log("dataWeatherbit Error", error);
+			console.log("Weatherbit Error", error);
 		}
 	}
 
 // Function to ger Pixabay data
-	const dataPixabay = async (pixabayURL, pixabay_apiKey, city, image) => {
-		const pburl = `https://pixabay.com/api/?key=${pixabay_apiKey}&q=${city}&image_type=photo`;
-		const res = await fetch (pburl);
+	const getDataFromPixabay = async (city) => {
+		const url = `https://pixabay.com/api/?key=${pixabay_apiKey}&q=${city}&image_type=photo`;
+		const res = await fetch (url);
 		try {
 			const data = await res.json();
 			return data;
 		}
 		catch (error) {
-			console.log("dataPixabay Error", error);
+			console.log("Pixabay Error", error);
 		}
 	}
 
-
-	const postData = async (url = '', data = {}) => {
-		const response = await fetch('url', {
-			method: "POST",
-			credentials: "same-origin",
-			headers: {
-			    "Content-Type": "application/json",
-			    // 'Accept': 'application/json'
+	const postData = async (url = "", data = {}) => {
+  		const response = await fetch(url, {
+		    method: "POST",
+		    credentials: "same-origin",
+		    headers: {
+		      "Content-Type": "application/json",
 		    },
 		    body: JSON.stringify(data),
 		});
-		  	try {
+  			try {
 			    const newData = await response.json();
-			    console.log(newData);
 			    return newData;
-		  	} 
-		  	catch (error) {
-		    	console.log("error", error);
-		  	}
+  			} 
+  			catch (error) {
+    			console.log("error", error);
+ 			}
+	};
 
 
 
@@ -172,15 +167,15 @@ const retDate = document.getElementById('retdate').value
 		    console.log("error", error);
 		}
 	}
-}
+
 
 
 	
 // export { 
 // 	bringAction,
-// 	dataGeonames,
-// 	dataWeatherbit,
-// 	dataPixabay,
-// 	postData,
-// 	updateUI
+// 	getDataFromGeoNames,
+// 	  getDataFromWeatherBit,
+// 	  getDataFromPixabay,
+// 	  updateUI,
+// 	  postData,
 // };

@@ -8,11 +8,11 @@
 
 import { 
 	bringAction,
-	dataGeonames,
-	dataWeatherbit,
-	dataPixabay,
-	postData,
-	updateUI
+	 getDataFromGeoNames,
+  getDataFromWeatherBit,
+  getDataFromPixabay,
+  updateUI,
+  postData,
 } from './js/app.js'
 
 
@@ -30,9 +30,9 @@ import './styles/style.scss'
 
 export { 
 	bringAction,
-	dataGeonames,
-	dataWeatherbit,
-	dataPixabay,
-	postData,
-	updateUI
+	 getDataFromGeoNames,
+  getDataFromWeatherBit,
+  getDataFromPixabay,
+  updateUI,
+  postData,
 };
