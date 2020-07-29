@@ -175,12 +175,6 @@ const retDate = document.getElementById('retdate').value
 }
 
 
-
-	// document.addEventListener("DOMContentLoaded", () => {
-	//   const button_submit = document.getElementById("generate");
-	//   button_submit.addEventListener("click", bringAction);
-	// });
-
 	
 // export { 
 // 	bringAction,
