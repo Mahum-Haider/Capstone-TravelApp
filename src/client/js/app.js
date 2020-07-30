@@ -39,7 +39,7 @@ const retDate = document.getElementsByClassName("myInput")[1].value;
 // Fetching geonames stats of destination place
 	// dataGeonames(geonameURL, city, geonames_username)
 	getDataFromGeoNames(city)
-    	.then(function(data) {
+    	.then(async function(data) {
         	// console.log(data)
         // return postData("http://localhost:3000/geonames", {
         	// OR
@@ -49,32 +49,34 @@ const retDate = document.getElementsByClassName("myInput")[1].value;
             // country: data.main.country
 
           // After the research, figured this out:
-         return postData('http://localhost:3000/geonames', {
+         return await postData('http://localhost:3000/geonames', {
         	latitude: data.geonames[0].lat,
         	longitude: data.geonames[0].lng,
-        	// city: data.geonames[0].name
+        	country: data.geonames[0].country
         })
         })
 
 // Understanding this part from: "https://knowledge.udacity.com/questions/248845"
 
         .then(function(res) {
-        	console.log("res")
-        	const lat = res[res.length - 1].latitude;
-            const lng = res[res.length - 1].longitude;
+        	console.log("res", res)
+        	const lat = res.latitude;
+            const lng = res.longitude;
         	return { lat, lng };
         })
-        .then (function({lat, lng}) {
-        	return getDataFromWeatherBit(lat, lng);
+        .then ( async function({lat, lng}) {
+        	return await getDataFromWeatherBit(lat, lng);
         })
         .then(function (weatherData) {
         	return postData('http://localhost:3000/weatherbit', {
         		high: weatherData.data[0].high_temp,
         		low: weatherData.data[0].low_temp,
         		description: weatherData.data[0].weather.description
-        	});
+        	})
 
         })
+
+       
         .then(function() {
         	return getDataFromPixabay(city);
         })
@@ -139,7 +141,7 @@ const retDate = document.getElementsByClassName("myInput")[1].value;
 		    headers: {
 		      "Content-Type": "application/json",
 		    },
-		    body: JSON.stringify(data),
+		    body: JSON.stringify(data)
 		});
   			try {
 			    const newData = await response.json();
@@ -153,23 +155,18 @@ const retDate = document.getElementsByClassName("myInput")[1].value;
 
 
 //Updating the UI dynamically
+
 	const updateUI = async () => {
-		const request = await fetch('http://localhost:3000/data');
-		try{
-		  	const allData = await request.json();
-		  	// console.log(allData)
-		  	document.getElementById('content').innerHTML = `The Weather Forecast Today <br> 
-		 		High: ${allData[allData.length - 2].high},
-		 		Low: ${allData[allData.length - 2].low} <br> ${allData[allData.length - 2].description}`;
-		    document.getElementById("image").src = allData[allData.length - 1].image;
-  		} 
-  		catch (error) {
-		    console.log("error", error);
-		}
-	}
+  const res = await fetch("http://localhost:3000/data");
 
-
-
+  try {
+    const allData = await request.json();
+    document.getElementById("content").innerHTML = `The Weather Forecast is <br> High: ${allData[allData.length - 2].high}, Low: ${allData[allData.length - 2].low} <br>  ${allData[allData.length - 2].description}`;
+    document.getElementById("image").src = allData[allData.length - 1].image;
+  } catch (error) {
+    console.log("error", error);
+  }
+};
 	
 // export { 
 // 	bringAction,
