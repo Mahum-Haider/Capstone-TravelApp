@@ -1,4 +1,4 @@
-import { bringAction } from './app.js';
+import { bringAction } from './app';
 
 describe('app', () => {
   test('bringAction should be defined', () => {

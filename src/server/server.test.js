@@ -1,5 +1,5 @@
 const request = require('supertest');
-const serv = require('./server.js')
+const server = require('./server.js')
 
 
 describe('The page should be running', () => {

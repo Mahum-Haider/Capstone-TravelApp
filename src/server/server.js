@@ -76,7 +76,6 @@ const server = app.listen(port, listening);
     res.send(projectData);
   });
 
-// NOT SURE ABOUT THIS
 // export server
 module.exports = server;
 
