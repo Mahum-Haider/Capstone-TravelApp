@@ -8,7 +8,7 @@
 
 import { 
 	bringAction,
-	 getDataFromGeoNames,
+	getDataFromGeoNames,
   getDataFromWeatherBit,
   getDataFromPixabay,
   updateUI,
@@ -30,9 +30,10 @@ import './styles/style.scss'
 
 export { 
 	bringAction,
-	 getDataFromGeoNames,
+	getDataFromGeoNames,
   getDataFromWeatherBit,
   getDataFromPixabay,
   updateUI,
   postData,
 };
+import 'regenerator-runtime/runtime';
