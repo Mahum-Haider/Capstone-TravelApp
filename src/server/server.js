@@ -1,5 +1,5 @@
 // Setup empty JS object to act as endpoint for all routes
-let projectData = {};
+let projectData = [];
 
 // Require Express to run server and routes
 const express = require('express');
@@ -46,11 +46,14 @@ const server = app.listen(port, listening);
     dataGeonames = {
         latitude: req.body.latitude,
         longitude: req.body.longitude,
-        country: req.body.country
+        // country: req.body.country
     };
-  	   Object.assign(projectData, dataGeonames);
-		  res.send(projectData)
-		  console.log(projectData);
+  	 //   Object.assign(projectData, dataGeonames);
+		  // res.send(projectData)
+		  // console.log("MY", projectData);
+      projectData.push(dataGeonames);
+      res.send(projectData);
+      console.log("MY", projectData);
   });
 
 // Add a "WeatherBit POST Route" that adds incoming data to projectData 

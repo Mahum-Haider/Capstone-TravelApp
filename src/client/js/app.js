@@ -5,9 +5,9 @@
 const geonames_username = 'mahum'
 const geonameURL = 'http://api.geonames.org/searchJSON?q='
 const weatherbit_apiKey = '25e64ccb62c842c6a2f539514735a74f'
-const weatherbitURL = 'https://api.weatherbit.io/v2.0/forecast/daily?lat='
+const weatherbitURL = 'http://api.weatherbit.io/v2.0/forecast/daily?lat='
 const pixabay_apiKey = '17623880-f3832363eaa493c9749941d77'
-const pixabayURL = 'https://pixabay.com/api/?key='
+const pixabayURL = 'http://pixabay.com/api/?key='
 // const apiURL = 'http://localhost:3000'
 
 document.getElementById('generate').addEventListener('click', bringAction);
@@ -40,55 +40,49 @@ const retDate = document.getElementsByClassName("myInput")[1].value;
 	// dataGeonames(geonameURL, city, geonames_username)
 	getDataFromGeoNames(city)
     	.then(async function(data) {
-        	// console.log(data)
-        // return postData("http://localhost:3000/geonames", {
-        	// OR
-        // return postData('/geonames', {
-            // latitude: data.main.latitude,
-            // longitude: data.main.longitude,
-            // country: data.main.country
-
           // After the research, figured this out:
-         return await postData('http://localhost:3000/geonames', {
+          //add data to POST request
+         return  await postData('http://localhost:3000/geonames', {
         	latitude: data.geonames[0].lat,
-        	longitude: data.geonames[0].lng,
-        	country: data.geonames[0].country
+        	longitude: data.geonames[0].lng
         })
         })
-
-// Understanding this part from: "https://knowledge.udacity.com/questions/248845"
+        
+// Understood this part from: "https://knowledge.udacity.com/questions/248845"
 
         .then(function(res) {
-        	console.log("res", res)
-        	const lat = res.latitude;
-            const lng = res.longitude;
-        	return { lat, lng };
+        	console.log("MY res", res)
+        	const lat = res[res.length - 1].latitude;
+            const lng = res[res.length - 1].longitude;
+            console.log("MY LAT", lat)
+        	return {lat, lng};
+        
         })
-        .then ( async function({lat, lng}) {
+
+        .then(async function({lat, lng}) {
+        	console.log("coords for Weather", lat, lng)
         	return await getDataFromWeatherBit(lat, lng);
         })
         .then(function (weatherData) {
-        	return postData('http://localhost:3000/weatherbit', {
+        	return  postData('http://localhost:3000/weatherbit', {
         		high: weatherData.data[0].high_temp,
         		low: weatherData.data[0].low_temp,
         		description: weatherData.data[0].weather.description
         	})
 
         })
-
-       
-        .then(function() {
-        	return getDataFromPixabay(city);
+        .then(async function() {
+        	return await getDataFromPixabay(city);
         })
         .then(function (data) {
         	return postData('http://localhost:3000/pixabay', {
         		image: data.hits[0].webformatURL
         	})
        	// Update
-        .then(updateUI());
-    });
-};
+       	.then(updateUI());
 
+    })
+};
 // OR
 	// .then(function(data){
 	// updateUI()
@@ -110,7 +104,8 @@ const retDate = document.getElementsByClassName("myInput")[1].value;
 
 //Function to get Weatherbit data
 	const getDataFromWeatherBit  = async (lat, lng) => {
-		const url = `https://api.weatherbit.io/v2.0/forecast/daily?lat=${lat}&lon=${lng}&key=${weatherbit_apiKey}`;
+		const url = `http://api.weatherbit.io/v2.0/forecast/daily?lat=${lat}&lon=${lng}&key=${weatherbit_apiKey}`;
+		// const url = `http://api.weatherbit.io/v2.0/forecast/daily?lat=48.85341&lon=2.3488&key=25e64ccb62c842c6a2f539514735a74f`;		
 		const res = await fetch (url);
 		try {
 			const data = await res.json();
@@ -123,7 +118,7 @@ const retDate = document.getElementsByClassName("myInput")[1].value;
 
 // Function to ger Pixabay data
 	const getDataFromPixabay = async (city) => {
-		const url = `https://pixabay.com/api/?key=${pixabay_apiKey}&q=${city}&image_type=photo`;
+		const url = `http://pixabay.com/api/?key=${pixabay_apiKey}&q=${city}&image_type=photo`;
 		const res = await fetch (url);
 		try {
 			const data = await res.json();
@@ -160,7 +155,7 @@ const retDate = document.getElementsByClassName("myInput")[1].value;
   const res = await fetch("http://localhost:3000/data");
 
   try {
-    const allData = await request.json();
+    const allData = await res.json();
     document.getElementById("content").innerHTML = `The Weather Forecast is <br> High: ${allData[allData.length - 2].high}, Low: ${allData[allData.length - 2].low} <br>  ${allData[allData.length - 2].description}`;
     document.getElementById("image").src = allData[allData.length - 1].image;
   } catch (error) {
@@ -168,11 +163,11 @@ const retDate = document.getElementsByClassName("myInput")[1].value;
   }
 };
 	
-// export { 
-// 	bringAction,
-// 	getDataFromGeoNames,
-// 	  getDataFromWeatherBit,
-// 	  getDataFromPixabay,
-// 	  updateUI,
-// 	  postData,
-// };
+export { 
+	bringAction,
+	getDataFromGeoNames,
+	  getDataFromWeatherBit,
+	  getDataFromPixabay,
+	  updateUI,
+	  postData,
+};
