@@ -3,6 +3,9 @@ Udacity - Capstone Project<br>
 HTML, CSS, SASS, JavaScript, Node.js, Express.js, Webpack, Babel, Jest, API
 
 ## Jet Set Travel
+<img width="1436" alt="Screen Shot 2020-10-06 at 10 30 51 AM" src="https://user-images.githubusercontent.com/64804103/95215998-997a2900-07bf-11eb-9613-dbc426aa171a.png">
+<img width="1437" alt="Screen Shot 2020-10-06 at 10 27 28 AM" src="https://user-images.githubusercontent.com/64804103/95216004-9bdc8300-07bf-11eb-8c1d-2d1a78983b37.png">
+
 
 
 ## Project requirements
