@@ -3,11 +3,12 @@
 // const apiKey = '&APPID=d73946388d98ee33c464c625756851e2&units=imperial'
 // const zipCode = document.getElementById('zip').value;
 const geonames_username = 'mahum'
-const geonameURL = 'http://api.geonames.org/searchJSON?q='
+// const geonameURL = 'http://api.geonames.org/searchJSON?q='
 const weatherbit_apiKey = '25e64ccb62c842c6a2f539514735a74f'
-const weatherbitURL = 'http://api.weatherbit.io/v2.0/forecast/daily?lat='
+// const weatherbitURL = 'http://api.weatherbit.io/v2.0/forecast/daily?lat='
 const pixabay_apiKey = '17623880-f3832363eaa493c9749941d77'
-const pixabayURL = 'http://pixabay.com/api/?key='
+// const pixabay_apiKey = '18363707-17c9855955e991a32387a6493'
+// const pixabayURL = 'http://pixabay.com/api/?key='
 // const apiURL = 'http://localhost:3000'
 
 document.getElementById('generate').addEventListener('click', bringAction);
@@ -75,6 +76,7 @@ const retDate = document.getElementsByClassName("myInput")[1].value;
         	return await getDataFromPixabay(city);
         })
         .then(function (data) {
+        	console.log("llllll")
         	return postData('http://localhost:3000/pixabay', {
         		image: data.hits[0].webformatURL
         	})
@@ -83,6 +85,7 @@ const retDate = document.getElementsByClassName("myInput")[1].value;
 
     })
 };
+
 // OR
 	// .then(function(data){
 	// updateUI()
@@ -105,7 +108,6 @@ const retDate = document.getElementsByClassName("myInput")[1].value;
 //Function to get Weatherbit data
 	const getDataFromWeatherBit  = async (lat, lng) => {
 		const url = `http://api.weatherbit.io/v2.0/forecast/daily?lat=${lat}&lon=${lng}&key=${weatherbit_apiKey}`;
-		// const url = `http://api.weatherbit.io/v2.0/forecast/daily?lat=48.85341&lon=2.3488&key=25e64ccb62c842c6a2f539514735a74f`;		
 		const res = await fetch (url);
 		try {
 			const data = await res.json();
@@ -119,7 +121,9 @@ const retDate = document.getElementsByClassName("myInput")[1].value;
 // Function to ger Pixabay data
 	const getDataFromPixabay = async (city) => {
 		const url = `http://pixabay.com/api/?key=${pixabay_apiKey}&q=${city}&image_type=photo`;
+		// const url = `https://pixabay.com/api/?key=18363707-17c9855955e991a32387a6493&q=istanbul&image_type=photo`;
 		const res = await fetch (url);
+		console.log(city, "pppppp")
 		try {
 			const data = await res.json();
 			return data;
